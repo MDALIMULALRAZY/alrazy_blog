@@ -1,0 +1,69 @@
+<template>
+  <div class="admin-auth-page">
+    <div class="auth-container">
+      <form v-on:submit.prevent="">
+        <AppControlInput type="email" v-model="email" @change="validateEmail">E-Mail Address</AppControlInput>
+        <AppControlInput type="password" v-model="pass" @change="validatePassword">Password</AppControlInput>
+        <AppButton @click="sendForm" type="submit">Login</AppButton>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from 'axios'
+
+export default {
+  name: 'AdminAuthPage',
+  layout: 'admin',
+  data() {
+    return {
+      isLogin: true,
+      email: '',
+      pass: ''
+    }
+  },
+  methods: {
+    validateEmail(){
+      let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(this.email.toLowerCase());
+    },
+    validatePassword(){
+      return this.pass.length >= 6
+    },
+    onSubmit(){
+      if(this.validateEmail() && this.validatePassword()){
+        this.$store.dispatch('authUser', {
+          isLogin: this.isLogin,
+          email: this.email,
+          pass: this.pass
+        }).then(() => {
+          this.$router.push('/admin');
+        })
+      }
+      else {
+        alert('Please, enter correct email and password');
+      }
+    },
+    sendForm(){
+      this.onSubmit();
+    }
+  }
+}
+</script>
+
+<style scoped>
+.admin-auth-page {
+  padding: 20px;
+}
+
+.auth-container {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 2px #ccc;
+  width: 300px;
+  margin: auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+</style>
